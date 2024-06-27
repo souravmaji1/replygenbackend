@@ -5,7 +5,7 @@ const axios = require('axios');
 const cors = require('cors');
 const Replicate = require('replicate');
 const app = express();
-const port = 4200;
+const port = 5000;
 
 app.use(express.json());
 app.use(cors({
