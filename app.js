@@ -8,7 +8,11 @@ const app = express();
 const port = 4200;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 const apiKey = "AIzaSyAmUcYgO4KOVusTdWXc7xEHRY-8l7dKMWc";
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -91,7 +95,7 @@ async function generateImage(prompt) {
     }
   }
 
-  app.post('/generate-storybook', async (req, res) => {
+  app.post('/api/generate-storybook', async (req, res) => {
     try {
       const { prompt } = req.body;
       if (!prompt) {
@@ -242,7 +246,7 @@ app.post('/api/generate-music', async (req, res) => {
 });
 
 
-app.post('/generate-image', async (req, res) => {
+app.post('/api/generate-image', async (req, res) => {
   try {
     const { prompt } = req.body;
 
