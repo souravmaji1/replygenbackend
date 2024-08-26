@@ -34,9 +34,9 @@ const upload = multer({
 const API_KEY = 'suaH02pXwO37aD8XQsYca1XlE3chrOvMGcdHJRJV';
 
 
-async function callVapiApi(filePath, token) {
+async function callVapiApi(fileBuffer, originalname, token) {
   const form = new FormData();
-  form.append('file', fs.createReadStream(filePath));
+  form.append('file', fileBuffer, { filename: originalname });
 
   try {
     const response = await axios.post('https://api.vapi.ai/file', form, {
@@ -64,7 +64,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 
   try {
-    const vapiResponse = await callVapiApi(req.file.path, token);
+    const vapiResponse = await callVapiApi(req.file.buffer, req.file.originalname, token);
     
     // Clean up: delete the uploaded file after processing
     fs.unlinkSync(req.file.path);
