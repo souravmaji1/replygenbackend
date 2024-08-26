@@ -89,7 +89,7 @@ app.post('/upload-dataset', upload.single('file'), async (req, res) => {
 
   try {
     const form = new FormData();
-    form.append('file', fs.createReadStream(req.file.path));
+    form.append('file', req.file.buffer, { filename: req.file.originalname });
 
     const datasetResponse = await axios.post('https://api.cohere.com/v1/datasets', form, {
       params: {
@@ -104,8 +104,6 @@ app.post('/upload-dataset', upload.single('file'), async (req, res) => {
 
     const datasetId = datasetResponse.data.id;
 
-    // Clean up the uploaded file
-    fs.unlinkSync(req.file.path);
 
     res.json({
       message: 'JSONL dataset uploaded successfully',
