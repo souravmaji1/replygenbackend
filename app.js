@@ -11,6 +11,7 @@ const { Client, GatewayIntentBits } = require('discord.js');
 const { Telegraf } = require('telegraf');
 const { Client: WhatsAppClient } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
+const BootBot = require('bootbot');
 
 app.use(cors());
 app.use(express.json());
@@ -31,7 +32,7 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
-const API_KEY = 'suaH02pXwO37aD8XQsYca1XlE3chrOvMGcdHJRJV';
+const API_KEY = '9MJzxkVoFlOO37IBNZaZKM4LUi06I9Z4mbPKQwYr';
 
 
 async function callVapiApi(fileBuffer, originalname, token) {
@@ -321,6 +322,41 @@ app.post('/start-whatsapp-bot', async (req, res) => {
     client.initialize();
   } catch (error) {
     res.status(500).json({ error: 'Failed to start WhatsApp bot: ' + error.message });
+  }
+});
+
+app.post('/start-facebook-bot', async (req, res) => {
+  const { accessToken, verifyToken, appSecret, modelId } = req.body;
+
+  if (!accessToken || !verifyToken || !appSecret || !modelId) {
+    return res.status(400).json({ error: 'Access token, verify token, app secret, and model ID are required' });
+  }
+
+  try {
+    const bot = new BootBot({
+      accessToken: accessToken,
+      verifyToken: verifyToken,
+      appSecret: appSecret
+    });
+
+    bot.on('message', async (payload, chat) => {
+      const text = payload.message.text;
+
+      try {
+        const cohereResponse = await callCohereAPI(text, modelId);
+        const reply = cohereResponse.text;
+        chat.say(reply);
+      } catch (error) {
+        console.error('Error processing message:', error);
+        chat.say('Sorry, I encountered an error while processing your message.');
+      }
+    });
+
+    bot.start();
+
+    res.json({ message: 'Facebook bot started successfully', modelId: modelId });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to start Facebook bot: ' + error.message });
   }
 });
 

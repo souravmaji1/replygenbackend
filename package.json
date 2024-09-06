@@ -17,6 +17,7 @@
     "@supabase/supabase-js": "^2.43.4",
     "@thirdweb-dev/sdk": "^4.0.29",
     "axios": "^1.6.2",
+    "bootbot": "^1.1.0",
     "cheerio": "^1.0.0",
     "circular-json": "^0.5.9",
     "cohere-ai": "^7.12.1",
